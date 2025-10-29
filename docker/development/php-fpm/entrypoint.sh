@@ -15,5 +15,11 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
+# Run Laravel migrations
+# -----------------------------------------------------------
+# Ensure the database schema is up to date.
+# -----------------------------------------------------------
+php artisan migrate --force
+
 # Run the default command (e.g., php-fpm or bash)
 exec "$@"

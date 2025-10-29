@@ -1,3 +1,6 @@
+# Stage 0: Install Composer
+FROM composer:latest AS composer
+
 # Stage 1: Build environment and Composer dependencies
 FROM php:8.4-fpm AS builder
 
@@ -49,8 +52,9 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install Composer and dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 
 # Stage 2: Production environment
