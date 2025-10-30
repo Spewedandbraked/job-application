@@ -3,8 +3,7 @@
 - Создайте .env файл (скопируйте .env.example в .env)
 
 Локальная установка:
-1. composer install
-2. docker compose -f compose.dev.yaml up --build -d
+1. docker compose -f compose.dev.yaml up --build -d
 
 После установки приложение доступно по http://localhost/
 

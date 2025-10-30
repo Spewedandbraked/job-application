@@ -134,6 +134,8 @@ ARG XDEBUG_LOG_LEVEL=0
 
 USER root
 
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
 # Configure Xdebug if enabled
 RUN if [ "${XDEBUG_ENABLED}" = "true" ]; then \
     pecl install xdebug && \
