@@ -11,6 +11,60 @@ use Illuminate\Support\Facades\Validator;
 
 class OrganizationController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/building/{buildingId}",
+     *     summary="Get organizations by building ID",
+     *     tags={"Organizations"},
+     *     @OA\Parameter(
+     *         name="buildingId",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the building",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="building", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="address", type="string")
+     *             ),
+     *             @OA\Property(property="organizations", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *                     @OA\Property(property="building", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="address", type="string"),
+     *                         @OA\Property(property="coordinates", type="object",
+     *                             @OA\Property(property="lat", type="number", format="float"),
+     *                             @OA\Property(property="lng", type="number", format="float")
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="activities", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="name", type="string"),
+     *                             @OA\Property(property="level", type="integer")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Building not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     )
+     * )
+     */
     public function byBuilding($buildingId): JsonResponse
     {
         $building = Building::find($buildingId);
@@ -57,6 +111,55 @@ class OrganizationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/activity/{activityId}",
+     *     summary="Get organizations by activity ID",
+     *     tags={"Organizations"},
+     *     @OA\Parameter(
+     *         name="activityId",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the activity",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="activity", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string")
+     *             ),
+     *             @OA\Property(property="organizations", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *                     @OA\Property(property="building", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="address", type="string")
+     *                     ),
+     *                     @OA\Property(property="activities", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="name", type="string")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Activity not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     )
+     * )
+     */
     public function byActivity($activityId): JsonResponse
     {
         $activity = Activity::find($activityId);
@@ -100,6 +203,82 @@ class OrganizationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/nearby",
+     *     summary="Find organizations nearby coordinates",
+     *     tags={"Organizations"},
+     *     @OA\Parameter(
+     *         name="lat",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude coordinate",
+     *         @OA\Schema(type="number", format="float")
+     *     ),
+     *     @OA\Parameter(
+     *         name="lng",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude coordinate",
+     *         @OA\Schema(type="number", format="float")
+     *     ),
+     *     @OA\Parameter(
+     *         name="radius",
+     *         in="query",
+     *         required=false,
+     *         description="Search radius in kilometers",
+     *         @OA\Schema(type="number", format="float")
+     *     ),
+     *     @OA\Parameter(
+     *         name="bbox",
+     *         in="query",
+     *         required=false,
+     *         description="Bounding box coordinates (min_lat,min_lng,max_lat,max_lng)",
+     *         @OA\Schema(type="string", example="55.9,37.5,56.0,37.6")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="center", type="object",
+     *                 @OA\Property(property="lat", type="number", format="float"),
+     *                 @OA\Property(property="lng", type="number", format="float")
+     *             ),
+     *             @OA\Property(property="radius", type="number", format="float"),
+     *             @OA\Property(property="bbox", type="string"),
+     *             @OA\Property(property="organizations", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *                     @OA\Property(property="building", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="address", type="string"),
+     *                         @OA\Property(property="coordinates", type="object",
+     *                             @OA\Property(property="lat", type="number", format="float"),
+     *                             @OA\Property(property="lng", type="number", format="float")
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="activities", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="name", type="string")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     )
+     * )
+     */
     public function nearby(Request $request): JsonResponse
     {
         Validator::make($request->all(), [
@@ -180,6 +359,52 @@ class OrganizationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/{id}",
+     *     summary="Get organization by ID",
+     *     tags={"Organizations"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Organization ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer"),
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="building", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="address", type="string"),
+     *                 @OA\Property(property="coordinates", type="object",
+     *                     @OA\Property(property="lat", type="number", format="float"),
+     *                     @OA\Property(property="lng", type="number", format="float")
+     *                 )
+     *             ),
+     *             @OA\Property(property="activities", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="level", type="integer"),
+     *                     @OA\Property(property="parent_id", type="integer", nullable=true)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Organization not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     )
+     * )
+     */
     public function show($id): JsonResponse
     {
         $organization = Organization::with(['phones', 'activities', 'building'])->find($id);
@@ -213,6 +438,58 @@ class OrganizationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/search/activity",
+     *     summary="Search organizations by activity including descendants",
+     *     tags={"Organizations", "Search"},
+     *     @OA\Parameter(
+     *         name="activity_id",
+     *         in="query",
+     *         required=true,
+     *         description="Activity ID to search for (includes all descendant activities)",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="search_activity", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string")
+     *             ),
+     *             @OA\Property(property="included_activity_ids", type="array", @OA\Items(type="integer")),
+     *             @OA\Property(property="organizations", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *                     @OA\Property(property="building", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="address", type="string")
+     *                     ),
+     *                     @OA\Property(property="activities", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="name", type="string"),
+     *                             @OA\Property(property="level", type="integer")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
     public function searchByActivity(Request $request): JsonResponse
     {
         $request->validate([
@@ -220,7 +497,7 @@ class OrganizationController extends Controller
         ]);
 
         $activity = Activity::with('descendants')->find($request->activity_id);
-        
+
         $activityIds = $this->getActivityWithDescendantsIds($activity);
 
         $organizations = Organization::with(['phones', 'activities', 'building'])
@@ -258,6 +535,53 @@ class OrganizationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/organizations/search/name",
+     *     summary="Search organizations by name",
+     *     tags={"Organizations", "Search"},
+     *     @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         required=true,
+     *         description="Organization name (partial match)",
+     *         @OA\Schema(type="string", minLength=2)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="search_query", type="string"),
+     *             @OA\Property(property="organizations", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phones", type="array", @OA\Items(type="string")),
+     *                     @OA\Property(property="building", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="address", type="string")
+     *                     ),
+     *                     @OA\Property(property="activities", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="name", type="string")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
     public function searchByName(Request $request): JsonResponse
     {
         $request->validate([
