@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
  *     description="API documentation for Job application"
  * )
  * @OA\Server(
- *     url="http://localhost:80/api",
+ *     url="http://localhost:80",
  *     description="Local server"
  * )
  */

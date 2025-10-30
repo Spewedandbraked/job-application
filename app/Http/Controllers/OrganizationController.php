@@ -13,7 +13,7 @@ class OrganizationController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/organizations/building/{buildingId}",
+     *     path="/api/organizations/by-building/{buildingId}",
      *     summary="Get organizations by building ID",
      *     tags={"Organizations"},
      *     @OA\Parameter(
@@ -113,7 +113,7 @@ class OrganizationController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/organizations/activity/{activityId}",
+     *     path="/api/organizations/by-activity/{activityId}",
      *     summary="Get organizations by activity ID",
      *     tags={"Organizations"},
      *     @OA\Parameter(

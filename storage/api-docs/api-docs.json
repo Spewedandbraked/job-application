@@ -7,18 +7,18 @@
     },
     "servers": [
         {
-            "url": "http://localhost:80/api",
+            "url": "http://localhost:80",
             "description": "Local server"
         }
     ],
     "paths": {
-        "/api/organizations/building/{buildingId}": {
+        "/api/organizations/by-building/{buildingId}": {
             "get": {
                 "tags": [
                     "Organizations"
                 ],
                 "summary": "Get organizations by building ID",
-                "operationId": "aae6fd413e5f76790a15e8b42e10919e",
+                "operationId": "b763cadfde65b8869dba7df8506714e8",
                 "parameters": [
                     {
                         "name": "buildingId",
@@ -136,13 +136,13 @@
                 }
             }
         },
-        "/api/organizations/activity/{activityId}": {
+        "/api/organizations/by-activity/{activityId}": {
             "get": {
                 "tags": [
                     "Organizations"
                 ],
                 "summary": "Get organizations by activity ID",
-                "operationId": "3445549c7daa790ee5f137b6309631d3",
+                "operationId": "36bf770303404ac106f8de6f79e74f4f",
                 "parameters": [
                     {
                         "name": "activityId",
