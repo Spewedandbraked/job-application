@@ -20,6 +20,7 @@ php artisan view:clear
 # Ensure the database schema is up to date.
 # -----------------------------------------------------------
 php artisan migrate --force
+php artisan db:seed
 
 # Run the default command (e.g., php-fpm or bash)
 exec "$@"
